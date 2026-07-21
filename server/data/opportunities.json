@@ -1,0 +1,38 @@
+[
+  {
+    "id": "opp1",
+    "title": "Junior SRE & Cloud Operations Trainee",
+    "company": "Google (via Amit Verma)",
+    "location": "Mountain View / Hybrid India",
+    "badge": "Mentorship + Referral",
+    "desc": "Direct referral opportunity by Staff SRE Amit Verma (Batch '98). For final year students with strong Linux & Go proficiency.",
+    "tags": ["Linux", "Golang", "Kubernetes", "Referral"]
+  },
+  {
+    "id": "opp2",
+    "title": "SaaS Platform Engineer Intern",
+    "company": "Zoho Desk",
+    "location": "Chennai, India",
+    "badge": "Campus Pipeline",
+    "desc": "Vikram Malhotra (Batch '12) is recruiting 5 B.Sc graduates for core Java server indexing teams.",
+    "tags": ["Java", "Distributed Systems", "Zoho Schools"]
+  },
+  {
+    "id": "opp3",
+    "title": "Product UX Associate",
+    "company": "Freshworks",
+    "location": "Chennai, India",
+    "badge": "Mentorship Open",
+    "desc": "Divya Pillai (Batch '14) is offering 1-on-1 portfolio reviews and Associate PM interview coaching.",
+    "tags": ["UX Research", "Figma", "Product Strategy"]
+  },
+  {
+    "id": "opp4",
+    "title": "AI Ops & Deep Learning Sandbox Fellowship",
+    "company": "Accenture AI Labs",
+    "location": "Hyderabad / Remote",
+    "badge": "Fully Sponsored",
+    "desc": "Funded by MD Karthik Swamy (Batch '08). Access high-performance GPU clusters for final year ML capstone projects.",
+    "tags": ["PyTorch", "Generative AI", "GPU Cluster"]
+  }
+]

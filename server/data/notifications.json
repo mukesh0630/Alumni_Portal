@@ -1,0 +1,23 @@
+[
+  {
+    "id": "n1",
+    "title": "New Alumni Verification Request",
+    "time": "10m ago",
+    "text": "Siddharth Sen (Batch of 2025) submitted placement request for Capgemini.",
+    "unread": true
+  },
+  {
+    "id": "n2",
+    "title": "Mentorship Request Granted",
+    "time": "2h ago",
+    "text": "Rajesh Iyer accepted a mentorship connection request.",
+    "unread": true
+  },
+  {
+    "id": "n3",
+    "title": "Department Innovation Fund",
+    "time": "1d ago",
+    "text": "Accenture & Zoho Alumni donated AI cloud credits for final-year projects.",
+    "unread": false
+  }
+]
