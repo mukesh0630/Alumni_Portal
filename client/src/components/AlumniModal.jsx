@@ -1,12 +1,59 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X, CheckCircle2, Award, Briefcase, MapPin, Sparkles, Mail, ExternalLink, Compass, Zap } from 'lucide-react';
 
 export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }) => {
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
+  // Store focus, trap it inside modal, restore on close
+  useEffect(() => {
+    previousFocusRef.current = document.activeElement;
+
+    // Focus the modal container
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+
+    return () => {
+      if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
+        previousFocusRef.current.focus();
+      }
+    };
+  }, []);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   if (!alumnus) return null;
 
+  // Close on backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Profile details for ${alumnus.name}`}
+    >
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col outline-none"
+      >
         {/* Header */}
         <div className="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-950/50 relative">
           <div className="flex items-start gap-4">
@@ -37,6 +84,7 @@ export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }
           <button
             onClick={onClose}
             className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+            aria-label="Close profile modal"
           >
             <X className="w-5 h-5" />
           </button>

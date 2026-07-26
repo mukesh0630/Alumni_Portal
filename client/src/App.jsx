@@ -32,6 +32,14 @@ function AppContent() {
   const [aiTargetName, setAiTargetName] = useState(null);
   const [aiPromptType, setAiPromptType] = useState(null);
 
+  // Mobile sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on view change (mobile)
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [activeView]);
+
   const handleSelectProfile = async (id) => {
     try {
       const res = await api.getAlumnusById(id);
@@ -57,7 +65,12 @@ function AppContent() {
   return (
     <div className="flex min-h-screen bg-[#0a061e] text-slate-100 font-sans">
       {/* Sidebar Navigation */}
-      <Sidebar activeView={activeView} setActiveView={setActiveView} />
+      <Sidebar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       {/* Main Layout Container */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -66,9 +79,10 @@ function AppContent() {
           setActiveView={setActiveView}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          onToggleSidebar={() => setSidebarOpen(prev => !prev)}
         />
 
-        <main className="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto">
+        <main className="p-4 md:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto">
           {activeView === 'dashboard' && (
             <DashboardView setActiveView={setActiveView} onSelectProfile={handleSelectProfile} />
           )}

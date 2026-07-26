@@ -14,27 +14,68 @@ import {
   Legend
 } from 'recharts';
 import { api } from '../services/api';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { ErrorBanner } from '../components/ErrorBanner';
 
 const COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#6366f1'];
 
 export const StatsView = () => {
   const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchStats();
   }, []);
 
   const fetchStats = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await api.getStats();
       if (res.success) setStats(res.stats);
     } catch (e) {
       console.error(e);
+      setError('Failed to load statistics dashboard.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!stats) {
-    return <div className="text-center py-12 text-slate-400 text-xs font-semibold">Loading metrics dashboard...</div>;
+  if (error) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div>
+          <h1 className="text-3xl font-extrabold text-white">Metrics Dashboard</h1>
+          <p className="text-xs text-slate-400 mt-1">Historical data, placement distributions, and geographic reach for the CS Department.</p>
+        </div>
+        <ErrorBanner message={error} onRetry={fetchStats} />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div>
+          <h1 className="text-3xl font-extrabold text-white">Metrics Dashboard</h1>
+          <p className="text-xs text-slate-400 mt-1">Historical data, placement distributions, and geographic reach for the CS Department.</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <LoadingSkeleton variant="stat" count={4} />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="glass-panel lg:col-span-2 animate-pulse">
+            <div className="h-4 w-48 bg-slate-800 rounded mb-4" />
+            <div className="h-64 bg-slate-800/30 rounded-xl" />
+          </div>
+          <div className="glass-panel animate-pulse">
+            <div className="h-4 w-36 bg-slate-800 rounded mb-4" />
+            <div className="h-64 bg-slate-800/30 rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Format batch data for AreaChart

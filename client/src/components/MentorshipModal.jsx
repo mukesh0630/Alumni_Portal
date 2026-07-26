@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export const MentorshipModal = ({ alumnus, onClose }) => {
   const [submitted, setSubmitted] = useState(false);
   const [note, setNote] = useState('');
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
+  // Focus management
+  useEffect(() => {
+    previousFocusRef.current = document.activeElement;
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+    return () => {
+      if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
+        previousFocusRef.current.focus();
+      }
+    };
+  }, []);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   if (!alumnus) return null;
 
@@ -16,12 +42,30 @@ export const MentorshipModal = ({ alumnus, onClose }) => {
     }, 2000);
   };
 
+  // Close on backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Request mentorship from ${alumnus.name}`}
+    >
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-2xl p-6 relative outline-none"
+      >
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+          aria-label="Close mentorship request"
         >
           <X className="w-4 h-4" />
         </button>

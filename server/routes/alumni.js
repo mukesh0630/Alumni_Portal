@@ -102,6 +102,12 @@ router.get('/:id', (req, res) => {
   res.json({ success: true, data: found });
 });
 
+// Helper to strip HTML tags for basic XSS prevention
+function sanitize(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g, '').trim();
+}
+
 // POST /api/alumni/register - Submit student graduation / alumni registration
 router.post('/register', (req, res) => {
   const data = readData();
@@ -111,20 +117,47 @@ router.post('/register', (req, res) => {
     return res.status(400).json({ success: false, message: 'Missing required fields (name, batch, company, email)' });
   }
 
+  // Input sanitization and length validation
+  const cleanName = sanitize(name);
+  const cleanEmail = sanitize(email);
+  const cleanCompany = sanitize(company);
+
+  if (cleanName.length > 100) {
+    return res.status(400).json({ success: false, message: 'Name must be 100 characters or fewer.' });
+  }
+
+  if (cleanEmail.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    return res.status(400).json({ success: false, message: 'Please provide a valid email address.' });
+  }
+
+  const batchNum = parseInt(batch, 10);
+  if (isNaN(batchNum) || batchNum < 1994 || batchNum > new Date().getFullYear() + 1) {
+    return res.status(400).json({ success: false, message: 'Batch year must be between 1994 and next year.' });
+  }
+
+  if (cleanCompany.length > 200) {
+    return res.status(400).json({ success: false, message: 'Company name must be 200 characters or fewer.' });
+  }
+
+  const cleanBio = sanitize(bio || '');
+  if (cleanBio.length > 2000) {
+    return res.status(400).json({ success: false, message: 'Bio must be 2000 characters or fewer.' });
+  }
+
   const newEntry = {
     id: 'q_' + Date.now(),
-    name,
-    batch: parseInt(batch, 10),
-    company,
-    designation: designation || 'Software Engineer',
-    location: location || 'Bengaluru, India',
-    registerNumber: registerNumber || ('CS' + batch + '00' + Math.floor(Math.random() * 90 + 10)),
-    email,
-    phone: phone || '+91 99999 00000',
-    linkedin: linkedin || 'linkedin.com',
-    bio: bio || 'B.Sc CS Graduate eager to contribute to technology.',
-    skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : ['Java', 'React']),
-    achievements: Array.isArray(achievements) ? achievements : (achievements ? achievements.split('\n').filter(Boolean) : ['Completed Graduation']),
+    name: cleanName,
+    batch: batchNum,
+    company: cleanCompany,
+    designation: sanitize(designation) || 'Software Engineer',
+    location: sanitize(location) || 'Bengaluru, India',
+    registerNumber: sanitize(registerNumber) || ('CS' + batch + '00' + Math.floor(Math.random() * 90 + 10)),
+    email: cleanEmail,
+    phone: sanitize(phone) || '+91 99999 00000',
+    linkedin: sanitize(linkedin) || 'linkedin.com',
+    bio: cleanBio || 'B.Sc CS Graduate eager to contribute to technology.',
+    skills: Array.isArray(skills) ? skills.map(s => sanitize(s)).filter(Boolean) : (skills ? sanitize(skills).split(',').map(s => s.trim()).filter(Boolean) : ['Java', 'React']),
+    achievements: Array.isArray(achievements) ? achievements.map(a => sanitize(a)).filter(Boolean) : (achievements ? sanitize(achievements).split('\n').filter(Boolean) : ['Completed Graduation']),
     photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'
   };
 
@@ -137,6 +170,7 @@ router.post('/register', (req, res) => {
     data: newEntry
   });
 });
+
 
 // PATCH /api/alumni/queue/:id/approve - Approve pending alumnus
 router.patch('/queue/:id/approve', (req, res) => {

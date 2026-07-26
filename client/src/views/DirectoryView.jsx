@@ -3,12 +3,16 @@ import { Sparkles, RotateCcw, ChevronLeft, ChevronRight, Briefcase } from 'lucid
 import { api } from '../services/api';
 import { AlumniCard } from '../components/AlumniCard';
 import { OpportunityCard } from '../components/OpportunityCard';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { ErrorBanner } from '../components/ErrorBanner';
+import { useDebounce } from '../hooks/useDebounce';
 
 export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, onApplyOpportunity }) => {
   const [alumni, setAlumni] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
   const [showOpportunities, setShowOpportunities] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Filter states
   const [batchFilter, setBatchFilter] = useState('');
@@ -18,16 +22,23 @@ export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, on
 
   const scrollRef = useRef(null);
 
+  // Debounce the search query to prevent API hammering on every keystroke
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
   useEffect(() => {
     fetchAlumni();
+  }, [debouncedSearch, batchFilter, companyFilter, locationFilter, roleFilter]);
+
+  useEffect(() => {
     fetchOpportunities();
-  }, [searchQuery, batchFilter, companyFilter, locationFilter, roleFilter]);
+  }, []);
 
   const fetchAlumni = async () => {
     setLoading(true);
+    setError(null);
     try {
       const filters = {};
-      if (searchQuery) filters.search = searchQuery;
+      if (debouncedSearch) filters.search = debouncedSearch;
       if (batchFilter) filters.batch = batchFilter;
       if (companyFilter) filters.company = companyFilter;
       if (locationFilter) filters.location = locationFilter;
@@ -37,6 +48,7 @@ export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, on
       if (res.success) setAlumni(res.data);
     } catch (e) {
       console.error(e);
+      setError('Failed to load alumni directory.');
     } finally {
       setLoading(false);
     }
@@ -99,12 +111,14 @@ export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, on
               <button
                 onClick={() => scrollNetflix(-320)}
                 className="p-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-violet-500"
+                aria-label="Scroll opportunities left"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => scrollNetflix(320)}
                 className="p-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-violet-500"
+                aria-label="Scroll opportunities right"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -198,8 +212,12 @@ export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, on
       </div>
 
       {/* Alumni Grid */}
-      {loading ? (
-        <div className="text-center py-12 text-slate-400 text-xs font-semibold">Loading alumni registry...</div>
+      {error ? (
+        <ErrorBanner message={error} onRetry={fetchAlumni} />
+      ) : loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <LoadingSkeleton variant="card" count={6} />
+        </div>
       ) : alumni.length === 0 ? (
         <div className="text-center py-16 glass-panel space-y-3">
           <p className="text-base font-bold text-white">No Alumni Matched Your Filters</p>

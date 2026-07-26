@@ -1,0 +1,644 @@
+// Fallback Mock Data for CS Alumni Portal (Client-side & Offline Resilience)
+
+export const MOCK_ALUMNI = [
+  {
+    id: "a1",
+    name: "Rajesh Iyer",
+    batch: 1994,
+    company: "Infosys",
+    designation: "Principal VP of Cloud Solutions",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: true,
+    email: "rajesh.iyer@infosys.com",
+    linkedin: "linkedin.com/in/rajesh-iyer-demo",
+    bio: "Pioneer from the very first batch of B.Sc Computer Science (1994). Over 30 years of IT experience, leading massive enterprise cloud migration strategies globally. Passionate about mentoring the next generation of architects.",
+    skills: ["Cloud Architecture", "Enterprise Strategy", "AWS/Azure", "SaaS Engineering", "Team Leadership"],
+    achievements: [
+      "Keynote speaker at Global Cloud Summit 2024.",
+      "Recipient of the Lifetime Achievement Award at Infosys Excellence 2023.",
+      "Helped migrate over 500+ legacy customer infrastructure systems to SaaS frameworks.",
+      "Established the Department Alumni Scholarship Fund in 2018."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "1994", role: "Software Engineer Trainee", company: "TCS" },
+      { year: "1998", role: "Senior Developer", company: "Wipro" },
+      { year: "2005", role: "Technology Lead", company: "Infosys" },
+      { year: "2012", role: "VP of Enterprise Solutions", company: "Infosys" },
+      { year: "2020", role: "Principal VP of Cloud Solutions", company: "Infosys" }
+    ]
+  },
+  {
+    id: "a2",
+    name: "Ananya Rao",
+    batch: 1996,
+    company: "Microsoft",
+    designation: "Principal Software Architect",
+    location: "Redmond, USA",
+    verified: true,
+    distinguished: true,
+    email: "ananya.rao@microsoft.com",
+    linkedin: "linkedin.com/in/ananya-rao-demo",
+    bio: "Core designer of distributed operating systems and Azure networking services. Deeply committed to increasing women in tech and fostering software engineering rigor.",
+    skills: ["Distributed Systems", "C++", "Azure Services", "System Architecture", "Open Source Contribution"],
+    achievements: [
+      "Filed 12 patents in cloud systems and load-balancing algorithms.",
+      "Tech Lead for Azure Core Compute scaling from 2018 to present.",
+      "Key contributor to Windows Core kernel modernization efforts.",
+      "Mentor at Microsoft Women in Tech Initiative."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "1996", role: "Research Associate", company: "IISc Bengaluru" },
+      { year: "1999", role: "Software Engineer", company: "Microsoft India" },
+      { year: "2006", role: "Senior Engineer", company: "Microsoft Redmond" },
+      { year: "2013", role: "Principal Architect", company: "Microsoft Redmond" }
+    ]
+  },
+  {
+    id: "a3",
+    name: "Amit Verma",
+    batch: 1998,
+    company: "Google",
+    designation: "Staff Site Reliability Engineer",
+    location: "Mountain View, USA",
+    verified: true,
+    distinguished: true,
+    email: "amit.verma@google.com",
+    linkedin: "linkedin.com/in/amit-verma-demo",
+    bio: "Obsessed with latency, automation, and keeping the planet's largest search engine up 24/7/365. Specializes in chaos engineering and high-availability systems.",
+    skills: ["SRE", "Go/Golang", "Kubernetes", "Chaos Engineering", "Linux Kernel", "Monitoring Tools"],
+    achievements: [
+      "Designed regional automated failover script saving $20M+ in annual outages.",
+      "SRE Lead for Google Search infrastructure during core updates.",
+      "Co-authored 'Site Reliability in Hyper-scale Systems' technical guide.",
+      "Guest speaker on distributed systems resilience at Stanford and IIT Madras."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "1998", role: "Systems Admin", company: "HCL Technologies" },
+      { year: "2002", role: "Senior Infrastructure Engineer", company: "Cognizant" },
+      { year: "2009", role: "Senior SRE", company: "Google Zürich" },
+      { year: "2017", role: "Staff SRE", company: "Google Mountain View" }
+    ]
+  },
+  {
+    id: "a4",
+    name: "Sandeep Nair",
+    batch: 2000,
+    company: "IBM",
+    designation: "Director of Cloud Architecture",
+    location: "Austin, USA",
+    verified: true,
+    distinguished: false,
+    email: "sandeep.nair@ibm.com",
+    linkedin: "linkedin.com/in/sandeep-nair-demo",
+    bio: "Decade-long journey focusing on Hybrid Cloud infrastructure, OpenShift orchestration, and AI systems containerization. I lead a team of 40+ architects.",
+    skills: ["Hybrid Cloud", "RedHat OpenShift", "Kubernetes", "Enterprise Sales Support", "Node.js"],
+    achievements: [
+      "Led the OpenShift container integration pipeline for Fortune 100 banks.",
+      "IBM Master Inventor award winner in 2021 (7 patents filed).",
+      "Successfully scaled regional delivery centers for cloud workloads in APAC."
+    ],
+    mentorship: false,
+    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2000", role: "Software Engineer", company: "IBM India" },
+      { year: "2007", role: "Lead Architect", company: "IBM Pune" },
+      { year: "2015", role: "Senior Director (Cloud Infrastructure)", company: "IBM Austin" }
+    ]
+  },
+  {
+    id: "a5",
+    name: "Deepa Krishnan",
+    batch: 2002,
+    company: "Oracle",
+    designation: "Senior Director of Databases",
+    location: "Redwood Shores, USA",
+    verified: true,
+    distinguished: true,
+    email: "deepa.krishnan@oracle.com",
+    linkedin: "linkedin.com/in/deepa-krishnan-demo",
+    bio: "Helping design the future of autonomous relational databases and cloud analytics tools. Passionate about query optimization and database storage kernels.",
+    skills: ["Relational Databases", "C", "SQL Optimization", "Oracle Cloud Infrastructure", "Storage Engines"],
+    achievements: [
+      "Holds 5 patents on automated index tuning algorithms.",
+      "Recipient of Oracle President's Technology Award 2022.",
+      "Led the kernel upgrade for Oracle 19c database release.",
+      "Donated modern database curriculum modules to the college department."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2002", role: "Database Engineer", company: "Oracle India" },
+      { year: "2008", role: "Principal Developer", company: "Oracle Redwood" },
+      { year: "2016", role: "Director of R&D", company: "Oracle Redwood" },
+      { year: "2022", role: "Senior Director of Databases", company: "Oracle Redwood" }
+    ]
+  },
+  {
+    id: "a6",
+    name: "Manoj Kumar",
+    batch: 2004,
+    company: "TCS",
+    designation: "Enterprise Infrastructure Head",
+    location: "Chennai, India",
+    verified: true,
+    distinguished: false,
+    email: "manoj.kumar@tcs.com",
+    linkedin: "linkedin.com/in/manoj-kumar-demo",
+    bio: "Directing tech operations for critical financial client accounts. Focused on virtualization, server compliance, and global scaling architectures.",
+    skills: ["Virtualization", "ITIL", "Enterprise Architecture", "Project Management", "Data Center Ops"],
+    achievements: [
+      "Managed IT systems transition for major European banks during mergers.",
+      "Overachieved SLA ratings consecutively for 6 years.",
+      "Promoted to Enterprise Head within 12 years of joining TCS."
+    ],
+    mentorship: false,
+    photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2004", role: "Systems Engineer Trainee", company: "TCS Chennai" },
+      { year: "2009", role: "Assistant Consultant", company: "TCS UK" },
+      { year: "2016", role: "Enterprise Architecture Specialist", company: "TCS Chennai" }
+    ]
+  },
+  {
+    id: "a7",
+    name: "Preeti Desai",
+    batch: 2006,
+    company: "Cognizant",
+    designation: "Global Client Delivery Manager",
+    location: "Pune, India",
+    verified: true,
+    distinguished: false,
+    email: "preeti.desai@cognizant.com",
+    linkedin: "linkedin.com/in/preeti-desai-demo",
+    bio: "Specialist in managing global software delivery lifecycles, Agile transformations, and client experience in healthtech and retail domains.",
+    skills: ["Global Delivery", "Agile Management", "HealthTech Solutions", "Client Relations", "Scrum Master"],
+    achievements: [
+      "Successfully delivered a $15M Digital Health Platform.",
+      "Authored best practices standard for Agile distributed setups inside Cognizant.",
+      "Regular guest lecturer at management institutes on Agile transformation."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2006", role: "Programmer Analyst", company: "Cognizant" },
+      { year: "2011", role: "Project Manager", company: "Cognizant" },
+      { year: "2018", role: "Global Client Delivery Manager", company: "Cognizant" }
+    ]
+  },
+  {
+    id: "a8",
+    name: "Karthik Swamy",
+    batch: 2008,
+    company: "Accenture",
+    designation: "Managing Director of AI Ops",
+    location: "Hyderabad, India",
+    verified: true,
+    distinguished: true,
+    email: "karthik.swamy@accenture.com",
+    linkedin: "linkedin.com/in/karthik-swamy-demo",
+    bio: "Empowering global companies to scale enterprise operations using generative AI and automation workflows. Advocate of responsible AI standards.",
+    skills: ["AI Operations", "Generative AI", "Enterprise Automation", "Python", "Predictive Analytics"],
+    achievements: [
+      "Built Accenture's proprietary automated testing engine used by 10,000+ engineers.",
+      "Represented India at the Global AI ethics summit in Paris.",
+      "Helped pivot 50+ enterprise systems from traditional analytics to Deep Learning architectures.",
+      "Funded the Department AI Innovation Sandbox Lab in 2024."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2008", role: "Software Engineer", company: "Accenture" },
+      { year: "2013", role: "Lead Data Scientist", company: "Accenture" },
+      { year: "2019", role: "Executive Director - Data & AI", company: "Accenture" },
+      { year: "2023", role: "Managing Director of AI Ops", company: "Accenture" }
+    ]
+  },
+  {
+    id: "a9",
+    name: "Swati Mishra",
+    batch: 2010,
+    company: "Capgemini",
+    designation: "Vice President of Digital Services",
+    location: "Mumbai, India",
+    verified: true,
+    distinguished: false,
+    email: "swati.mishra@capgemini.com",
+    linkedin: "linkedin.com/in/swati-mishra-demo",
+    bio: "Directing digital transformation strategies, API economy models, and containerization initiatives for financial hubs.",
+    skills: ["Digital Transformation", "Microservices", "RESTful Architecture", "Financial APIs", "Strategy"],
+    achievements: [
+      "Received Capgemini Leader of the Year award in 2022.",
+      "Pioneered the Open Banking framework implementation in Southeast Asia.",
+      "Mentored over 100 campus graduates into technical analysts."
+    ],
+    mentorship: false,
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2010", role: "Technical Analyst", company: "Capgemini" },
+      { year: "2015", role: "Solutions Consultant", company: "Capgemini" },
+      { year: "2021", role: "VP of Digital Services", company: "Capgemini" }
+    ]
+  },
+  {
+    id: "a10",
+    name: "Vikram Malhotra",
+    batch: 2012,
+    company: "Zoho",
+    designation: "Engineering Head (SaaS Platforms)",
+    location: "Chennai, India",
+    verified: true,
+    distinguished: true,
+    email: "vikram.malhotra@zoho.com",
+    linkedin: "linkedin.com/in/vikram-malhotra-demo",
+    bio: "Proud B.Sc Computer Science alumnus (2012). Built core components of Zoho Desk and Zoho Mail server infrastructure. True believer in build-it-from-scratch ideology.",
+    skills: ["Java", "SaaS Engineering", "Browser Performance", "Scale", "Database Tuning"],
+    achievements: [
+      "Wrote Zoho Mail's high-efficiency indexing engine from scratch.",
+      "Mentored and hired 30+ students directly from the department via Zoho Schools.",
+      "Frequent tech speaker on scaling Java servers and minimizing overhead.",
+      "Recipient of Zoho's Tech Titan Award 2021."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2012", role: "Member Technical Staff", company: "Zoho" },
+      { year: "2016", role: "Senior Engineer", company: "Zoho" },
+      { year: "2020", role: "Engineering Head (SaaS)", company: "Zoho" }
+    ]
+  },
+  {
+    id: "a11",
+    name: "Divya Pillai",
+    batch: 2014,
+    company: "Freshworks",
+    designation: "Director of Product Management",
+    location: "Chennai, India",
+    verified: true,
+    distinguished: true,
+    email: "divya.pillai@freshworks.com",
+    linkedin: "linkedin.com/in/divya-pillai-demo",
+    bio: "Leading product lines for Customer Experience automation at Freshworks. Obsessed with user-centric design, feature roadmaps, and data-driven product analytics.",
+    skills: ["Product Strategy", "UX Design", "Customer Experience (CX)", "A/B Testing", "Growth Metrics"],
+    achievements: [
+      "Grew Freshworks CRM active user base by 140% in two years.",
+      "Nominated for the SaaS Product Leader of the Year Award 2023.",
+      "Instrumental in pre-IPO product audits.",
+      "Conducted 10+ resume building workshops for final-year students."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2014", role: "Product Associate", company: "Freshworks" },
+      { year: "2018", role: "Product Lead (CRM)", company: "Freshworks" },
+      { year: "2022", role: "Director of Product Management", company: "Freshworks" }
+    ]
+  },
+  {
+    id: "a12",
+    name: "Rahul Sen",
+    batch: 2016,
+    company: "Amazon",
+    designation: "Principal Software Development Engineer",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: true,
+    email: "rahul.sen@amazon.com",
+    linkedin: "linkedin.com/in/rahul-sen-demo",
+    bio: "One of the youngest alumni to reach L7 Principal SDE at Amazon. Architected high-concurrency payment routing APIs handling millions of TPS.",
+    skills: ["Java", "Distributed Systems", "DynamoDB", "API Design", "High Concurrency", "AWS Compute"],
+    achievements: [
+      "Designed the multi-channel payment gateway fallback logic for Prime Day.",
+      "Holds 3 patents on transactional concurrency resolution models.",
+      "Recipient of the Amazon Inventor of the Year award 2023.",
+      "Regular technical contributor to open-source database connectors."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2016", role: "Software Development Engineer I", company: "Amazon" },
+      { year: "2018", role: "SDE II (AWS Gateway)", company: "Amazon" },
+      { year: "2021", role: "Staff SDE", company: "Amazon" },
+      { year: "2024", role: "Principal SDE", company: "Amazon" }
+    ]
+  },
+  {
+    id: "a13",
+    name: "Meera Nair",
+    batch: 2017,
+    company: "HCL",
+    designation: "Technical Lead (Data Analytics)",
+    location: "Noida, India",
+    verified: true,
+    distinguished: false,
+    email: "meera.nair@hcl.com",
+    linkedin: "linkedin.com/in/meera-nair-demo",
+    bio: "Focusing on big data processing, Apache Spark scaling, and predictive business intelligence modeling for logistics giants.",
+    skills: ["Apache Spark", "Scala", "Data Warehousing", "PowerBI", "Hadoop"],
+    achievements: [
+      "Built HCL's SmartLogistics pipeline, saving 12% in shipping delay costs.",
+      "Certified Spark Developer with honors.",
+      "Mentored B.Sc students for their final-year Big Data projects."
+    ],
+    mentorship: false,
+    photo: "https://images.unsplash.com/photo-1594744803329-e58b31de215f?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2017", role: "Graduate Engineer Trainee", company: "HCL" },
+      { year: "2020", role: "Senior Developer", company: "HCL" },
+      { year: "2023", role: "Technical Lead (Data Analytics)", company: "HCL" }
+    ]
+  },
+  {
+    id: "a14",
+    name: "Arjun Mehta",
+    batch: 2018,
+    company: "Wipro",
+    designation: "Solution Architect (IoT)",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: false,
+    email: "arjun.mehta@wipro.com",
+    linkedin: "linkedin.com/in/arjun-mehta-demo",
+    bio: "Designing embedded edge systems and sensor node telemetry frameworks. Dedicated to building green and low-power IoT networks.",
+    skills: ["Embedded C", "Raspberry Pi/Arduino", "MQTT", "AWS IoT Core", "System Integration"],
+    achievements: [
+      "Deployed smart water-metering mesh network across 3 campuses.",
+      "Wipro Outstanding Innovation Award winner in 2022.",
+      "Guest speaker on IoT and Edge computing at regional colleges."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2018", role: "Project Engineer", company: "Wipro" },
+      { year: "2021", role: "Consultant", company: "Wipro" },
+      { year: "2024", role: "Solution Architect (IoT)", company: "Wipro" }
+    ]
+  },
+  {
+    id: "a15",
+    name: "Shreya Joshi",
+    batch: 2019,
+    company: "LTI Mindtree",
+    designation: "Principal UX Architect",
+    location: "Pune, India",
+    verified: true,
+    distinguished: false,
+    email: "shreya.joshi@ltimindtree.com",
+    linkedin: "linkedin.com/in/shreya-joshi-demo",
+    bio: "Passionate about bridge-building between human psychology and digital interactions. I build design systems that scale across enterprise products.",
+    skills: ["Figma", "User Research", "Wireframing", "UI Prototyping", "Design Tokens"],
+    achievements: [
+      "Re-designed digital portals for 3 tier-1 insurance conglomerates.",
+      "Winner of LTI Spark UX Challenge 2021.",
+      "Maintains the open-source library 'Vanilla Glass UI'."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2019", role: "UI Designer", company: "LTI" },
+      { year: "2021", role: "Senior UX Designer", company: "LTI Mindtree" },
+      { year: "2024", role: "Principal UX Architect", company: "LTI Mindtree" }
+    ]
+  },
+  {
+    id: "a16",
+    name: "Rohan Gupta",
+    batch: 2020,
+    company: "Adobe",
+    designation: "Senior Engineering Manager",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: false,
+    email: "rohan.gupta@adobe.com",
+    linkedin: "linkedin.com/in/rohan-gupta-demo",
+    bio: "Leading development on next-generation vector rendering engines inside Web Adobe Illustrator. Lover of canvas architectures and WebGL.",
+    skills: ["JavaScript/TypeScript", "WebGL", "Rust", "Canvas API", "WebAssembly"],
+    achievements: [
+      "Led the transition of critical rendering algorithms from C++ to WebAssembly.",
+      "Adobe Outstanding Innovator Award recipient (2023).",
+      "Regular blogger on frontend physics and high-performance WebGL."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2020", role: "Software Engineer", company: "Adobe" },
+      { year: "2022", role: "Lead Engineer", company: "Adobe" },
+      { year: "2024", role: "Senior Engineering Manager", company: "Adobe" }
+    ]
+  },
+  {
+    id: "a17",
+    name: "Kavya Hegde",
+    batch: 2021,
+    company: "Salesforce",
+    designation: "Senior Software Developer",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: false,
+    email: "kavya.hegde@salesforce.com",
+    linkedin: "linkedin.com/in/kavya-hegde-demo",
+    bio: "Focusing on Lightning Web Components (LWC) frameworks, Salesforce cloud scaling, and API integration tools for digital marketplaces.",
+    skills: ["LWC Framework", "Apex", "JavaScript", "SOQL", "CI/CD Platforms"],
+    achievements: [
+      "Optimized Apex transaction timings, cutting CPU usage by 30%.",
+      "Salesforce Platform Developer II certification holder.",
+      "Conducts mock interview prep for college seniors."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2021", role: "Associate Developer", company: "Salesforce" },
+      { year: "2023", role: "Senior Software Developer", company: "Salesforce" }
+    ]
+  },
+  {
+    id: "a18",
+    name: "Aditya Saxena",
+    batch: 2022,
+    company: "Intel",
+    designation: "Hardware-Software Co-designer",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: false,
+    email: "aditya.saxena@intel.com",
+    linkedin: "linkedin.com/in/aditya-saxena-demo",
+    bio: "Working on the boundary of low-level software compilers, instruction-set architectures (ISA), and processor firmware microcode.",
+    skills: ["Assembly (x86/ARM)", "C++", "Compilers", "Computer Architecture", "Valgrind/GDB"],
+    achievements: [
+      "Optimized vector compilation matrices for core client CPUs.",
+      "Awarded Intel Division Recognition in 2023 for debugging crucial firmware race condition."
+    ],
+    mentorship: false,
+    photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2022", role: "Graduate Intern", company: "Intel" },
+      { year: "2023", role: "Hardware-Software Co-designer", company: "Intel" }
+    ]
+  },
+  {
+    id: "a19",
+    name: "Neha Reddy",
+    batch: 2023,
+    company: "Nvidia",
+    designation: "System Software Engineer",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: false,
+    email: "neha.reddy@nvidia.com",
+    linkedin: "linkedin.com/in/neha-reddy-demo",
+    bio: "CUDA enthusiast. Building custom parallel programming drivers for AI model training pipelines on H100 GPU clusters.",
+    skills: ["CUDA", "C++", "GPU Parallelism", "Deep Learning Libraries", "PyTorch Internal"],
+    achievements: [
+      "Wrote custom kernel for sparse matrix multipliers, speeding up test models by 14%.",
+      "Top contributor to internal GPU-SXM cluster dashboard."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1614644147724-2d4785d69962?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2023", role: "System Software Intern", company: "Nvidia" },
+      { year: "2024", role: "System Software Engineer", company: "Nvidia" }
+    ]
+  },
+  {
+    id: "a20",
+    name: "Varun Das",
+    batch: 2024,
+    company: "AMD",
+    designation: "Associate Silicon Design Engineer",
+    location: "Bengaluru, India",
+    verified: true,
+    distinguished: false,
+    email: "varun.das@amd.com",
+    linkedin: "linkedin.com/in/varun-das-demo",
+    bio: "Recent graduate of the department. Dedicated to silicon validation, RTL debugging, and building testing harnesses in SystemVerilog.",
+    skills: ["SystemVerilog", "RTL Coding", "Silicon Validation", "FPGA Programming", "Python Automation"],
+    achievements: [
+      "Designed automatic test suite generator for post-silicon validation, reducing time-to-test by 25%."
+    ],
+    mentorship: true,
+    photo: "https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?auto=format&fit=crop&q=80&w=200",
+    timeline: [
+      { year: "2024", role: "Associate Silicon Design Engineer", company: "AMD" }
+    ]
+  }
+];
+
+export const MOCK_VERIFICATION_QUEUE = [
+  {
+    id: "q1",
+    name: "Siddharth Sen",
+    batch: 2025,
+    company: "Capgemini",
+    designation: "Software Engineer Trainee",
+    location: "Hyderabad, India",
+    registerNumber: "CS2025091",
+    email: "siddharth.sen@capgemini.com",
+    phone: "+91 98765 43210",
+    linkedin: "linkedin.com/in/siddharth-sen-demo",
+    bio: "Enthusiastic developer focusing on front-end web technologies and responsive design modules.",
+    skills: ["HTML/CSS", "JavaScript", "React.js", "Git"],
+    achievements: ["Winner of Inter-department Hackathon 2024", "Maintained Department website"],
+    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200"
+  },
+  {
+    id: "q2",
+    name: "Ritika Roy",
+    batch: 2021,
+    company: "Zoho",
+    designation: "QA Automation Engineer",
+    location: "Chennai, India",
+    registerNumber: "CS2021045",
+    email: "ritika.roy@zoho.com",
+    phone: "+91 87654 32109",
+    linkedin: "linkedin.com/in/ritika-roy-demo",
+    bio: "Ensuring zero-bug product delivery through end-to-end Selenium testing frameworks and performance dashboards.",
+    skills: ["Selenium", "Java", "TestNG", "Jenkins"],
+    achievements: ["Best Quality Analyst Award Zoho Q3 2023"],
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200"
+  },
+  {
+    id: "q3",
+    name: "Pranav Rao",
+    batch: 1999,
+    company: "Oracle",
+    designation: "Principal Consultant",
+    location: "Bengaluru, India",
+    registerNumber: "CS1999012",
+    email: "pranav.rao@oracle.com",
+    phone: "+91 76543 21098",
+    linkedin: "linkedin.com/in/pranav-rao-demo",
+    bio: "Seasoned veteran in database administration, ERP integrations, and software delivery consultation for financial industries.",
+    skills: ["PL/SQL", "ERP Architecture", "Oracle Database", "Client Strategy"],
+    achievements: ["Managed 15+ full-scale ERP deployments", "Spearheaded Oracle Banking suite migration for retail banks"],
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200"
+  }
+];
+
+export const MOCK_OPPORTUNITIES = [
+  {
+    id: "opp1",
+    title: "Junior SRE & Cloud Operations Trainee",
+    company: "Google (via Amit Verma)",
+    location: "Mountain View / Hybrid India",
+    badge: "Mentorship + Referral",
+    desc: "Direct referral opportunity by Staff SRE Amit Verma (Batch '98). For final year students with strong Linux & Go proficiency.",
+    tags: ["Linux", "Golang", "Kubernetes", "Referral"]
+  },
+  {
+    id: "opp2",
+    title: "SaaS Platform Engineer Intern",
+    company: "Zoho Desk",
+    location: "Chennai, India",
+    badge: "Campus Pipeline",
+    desc: "Vikram Malhotra (Batch '12) is recruiting 5 B.Sc graduates for core Java server indexing teams.",
+    tags: ["Java", "Distributed Systems", "Zoho Schools"]
+  },
+  {
+    id: "opp3",
+    title: "Product UX Associate",
+    company: "Freshworks",
+    location: "Chennai, India",
+    badge: "Mentorship Open",
+    desc: "Divya Pillai (Batch '14) is offering 1-on-1 portfolio reviews and Associate PM interview coaching.",
+    tags: ["UX Research", "Figma", "Product Strategy"]
+  },
+  {
+    id: "opp4",
+    title: "AI Ops & Deep Learning Sandbox Fellowship",
+    company: "Accenture AI Labs",
+    location: "Hyderabad / Remote",
+    badge: "Fully Sponsored",
+    desc: "Funded by MD Karthik Swamy (Batch '08). Access high-performance GPU clusters for final year ML capstone projects.",
+    tags: ["PyTorch", "Generative AI", "GPU Cluster"]
+  }
+];
+
+export const MOCK_NOTIFICATIONS = [
+  {
+    id: "n1",
+    title: "New Alumni Verification Request",
+    time: "10m ago",
+    text: "Siddharth Sen (Batch of 2025) submitted placement request for Capgemini.",
+    unread: true
+  },
+  {
+    id: "n2",
+    title: "Mentorship Request Granted",
+    time: "2h ago",
+    text: "Rajesh Iyer accepted a mentorship connection request.",
+    unread: true
+  },
+  {
+    id: "n3",
+    title: "Department Innovation Fund",
+    time: "1d ago",
+    text: "Accenture & Zoho Alumni donated AI cloud credits for final-year projects.",
+    unread: false
+  }
+];

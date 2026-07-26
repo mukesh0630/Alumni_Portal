@@ -2,16 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Briefcase, Award, Users, Globe2, Building2, CheckCircle2, Sparkles } from 'lucide-react';
 import { api } from '../services/api';
 import { AlumniCard } from '../components/AlumniCard';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { ErrorBanner } from '../components/ErrorBanner';
 
 export const DashboardView = ({ setActiveView, onSelectProfile }) => {
   const [stats, setStats] = useState(null);
   const [featuredAlumni, setFeaturedAlumni] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const [statsRes, alumniRes] = await Promise.all([
         api.getStats(),
@@ -21,8 +27,19 @@ export const DashboardView = ({ setActiveView, onSelectProfile }) => {
       if (alumniRes.success) setFeaturedAlumni(alumniRes.data.slice(0, 3));
     } catch (e) {
       console.error(e);
+      setError('Unable to load dashboard data. The server may be offline.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (error) {
+    return (
+      <div className="space-y-12 animate-fade-in">
+        <ErrorBanner message={error} onRetry={loadData} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -35,7 +52,7 @@ export const DashboardView = ({ setActiveView, onSelectProfile }) => {
           <span className="px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 mb-4">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Department of Computer Science
           </span>
-          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight mb-4">
             Connecting Pioneers, <br />
             <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
               Shaping Futures.
@@ -65,30 +82,36 @@ export const DashboardView = ({ setActiveView, onSelectProfile }) => {
 
       {/* Info Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-panel text-center">
-          <div className="text-3xl md:text-4xl font-extrabold text-violet-400 mb-1">
-            {stats ? stats.totalAlumni : '--'}
-          </div>
-          <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Alumni</div>
-        </div>
-        <div className="glass-panel text-center">
-          <div className="text-3xl md:text-4xl font-extrabold text-emerald-400 mb-1">
-            {stats ? stats.verifiedCount : '--'}
-          </div>
-          <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Verified Registry</div>
-        </div>
-        <div className="glass-panel text-center">
-          <div className="text-3xl md:text-4xl font-extrabold text-pink-400 mb-1">
-            {stats ? stats.uniqueCompaniesCount : '--'}
-          </div>
-          <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Companies</div>
-        </div>
-        <div className="glass-panel text-center">
-          <div className="text-3xl md:text-4xl font-extrabold text-amber-400 mb-1">
-            {stats ? stats.uniqueRegionsCount : '--'}
-          </div>
-          <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Global Regions</div>
-        </div>
+        {loading ? (
+          <LoadingSkeleton variant="stat" count={4} />
+        ) : (
+          <>
+            <div className="glass-panel text-center">
+              <div className="text-3xl md:text-4xl font-extrabold text-violet-400 mb-1">
+                {stats ? stats.totalAlumni : '--'}
+              </div>
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Alumni</div>
+            </div>
+            <div className="glass-panel text-center">
+              <div className="text-3xl md:text-4xl font-extrabold text-emerald-400 mb-1">
+                {stats ? stats.verifiedCount : '--'}
+              </div>
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Verified Registry</div>
+            </div>
+            <div className="glass-panel text-center">
+              <div className="text-3xl md:text-4xl font-extrabold text-pink-400 mb-1">
+                {stats ? stats.uniqueCompaniesCount : '--'}
+              </div>
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Companies</div>
+            </div>
+            <div className="glass-panel text-center">
+              <div className="text-3xl md:text-4xl font-extrabold text-amber-400 mb-1">
+                {stats ? stats.uniqueRegionsCount : '--'}
+              </div>
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Global Regions</div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Distinguished Pioneers */}
@@ -107,9 +130,13 @@ export const DashboardView = ({ setActiveView, onSelectProfile }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredAlumni.map(al => (
-            <AlumniCard key={al.id} alumnus={al} onSelectProfile={onSelectProfile} />
-          ))}
+          {loading ? (
+            <LoadingSkeleton variant="card" count={3} />
+          ) : (
+            featuredAlumni.map(al => (
+              <AlumniCard key={al.id} alumnus={al} onSelectProfile={onSelectProfile} />
+            ))
+          )}
         </div>
       </div>
 
