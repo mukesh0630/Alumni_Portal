@@ -3,7 +3,10 @@ import { Briefcase, MapPin, ExternalLink, Sparkles } from 'lucide-react';
 
 export const OpportunityCard = ({ opp, onApply }) => {
   return (
-    <div className="w-80 shrink-0 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-950/40 transition-all group">
+    <div
+      style={{ minWidth: '330px', width: '330px', flexShrink: 0 }}
+      className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-950/40 transition-all group shrink-0"
+    >
       <div>
         <div className="flex justify-between items-start mb-2">
           <span className="px-2.5 py-0.5 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 text-[10px] font-bold flex items-center gap-1">

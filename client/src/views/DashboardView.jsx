@@ -177,7 +177,8 @@ export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportuni
         {/* Sliding Horizontal Wrapper */}
         <div
           ref={scrollRef}
-          className="flex gap-5 overflow-x-auto pb-4 pt-1 scroll-smooth scrollbar-hidden"
+          style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}
+          className="flex flex-row flex-nowrap gap-5 overflow-x-auto pb-4 pt-1 scroll-smooth scrollbar-hidden"
         >
           {loading ? (
             <LoadingSkeleton variant="card" count={3} />
