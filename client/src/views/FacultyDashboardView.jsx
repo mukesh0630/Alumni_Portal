@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ShieldCheck, Check, X, Clock, Users, Award, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Check, X, Clock, Users, Award, AlertCircle, Briefcase, ChevronRight } from 'lucide-react';
 import { api } from '../services/api';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { ErrorBanner } from '../components/ErrorBanner';
@@ -12,6 +12,10 @@ export const FacultyDashboardView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Opportunity approval queue
+  const [oppQueue, setOppQueue] = useState([]);
+  const [activeTab, setActiveTab] = useState('alumni'); // 'alumni' | 'opportunities'
+
   useEffect(() => {
     loadData();
   }, []);
@@ -20,12 +24,14 @@ export const FacultyDashboardView = () => {
     setLoading(true);
     setError(null);
     try {
-      const [queueRes, statsRes] = await Promise.all([
+      const [queueRes, statsRes, oppRes] = await Promise.all([
         api.getVerificationQueue(),
-        api.getStats()
+        api.getStats(),
+        api.getPendingOpportunities()
       ]);
       if (queueRes.success) setQueue(queueRes.data);
       if (statsRes.success) setStats(statsRes.stats);
+      if (oppRes.success) setOppQueue(oppRes.data);
     } catch (e) {
       console.error(e);
       setError('Failed to load verification data.');
@@ -40,6 +46,7 @@ export const FacultyDashboardView = () => {
 
   const dismissToast = useCallback(() => setToast(null), []);
 
+  // Alumni verification handlers
   const handleApprove = async (id, name) => {
     try {
       const res = await api.approveAlumni(id);
@@ -54,7 +61,6 @@ export const FacultyDashboardView = () => {
   };
 
   const handleReject = async (id, name) => {
-    // Confirmation dialog before destructive action
     const confirmed = window.confirm(`Are you sure you want to reject the registration for ${name}? This action cannot be undone.`);
     if (!confirmed) return;
 
@@ -70,6 +76,34 @@ export const FacultyDashboardView = () => {
     }
   };
 
+  // Opportunity approval handlers
+  const handleApproveOpp = async (id, title) => {
+    try {
+      const res = await api.approveOpportunity(id);
+      if (res.success) {
+        setOppQueue(prev => prev.filter(o => o.id !== id));
+        showToast(`Approved "${title}". Now visible to students.`, 'success');
+      }
+    } catch (e) {
+      showToast(`Failed to approve opportunity: ${e.message}`, 'error');
+    }
+  };
+
+  const handleRejectOpp = async (id, title) => {
+    const confirmed = window.confirm(`Are you sure you want to reject the opportunity "${title}"?`);
+    if (!confirmed) return;
+
+    try {
+      const res = await api.rejectOpportunity(id);
+      if (res.success) {
+        setOppQueue(prev => prev.filter(o => o.id !== id));
+        showToast(`Rejected opportunity "${title}".`, 'error');
+      }
+    } catch (e) {
+      showToast(`Failed to reject opportunity: ${e.message}`, 'error');
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in relative">
       {/* Toast Notification */}
@@ -81,7 +115,7 @@ export const FacultyDashboardView = () => {
           <ShieldCheck className="w-6 h-6 text-pink-400" />
           <h1 className="text-3xl font-extrabold text-white">Faculty Verification Hub</h1>
         </div>
-        <p className="text-xs text-slate-400">Review, verify, and approve new alumni registrations submitted by graduating students.</p>
+        <p className="text-xs text-slate-400">Review, verify, and approve new alumni registrations and opportunity postings.</p>
       </div>
 
       {error ? (
@@ -89,9 +123,9 @@ export const FacultyDashboardView = () => {
       ) : (
         <>
           {/* Metric Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {loading ? (
-              <LoadingSkeleton variant="stat" count={3} />
+              <LoadingSkeleton variant="stat" count={4} />
             ) : (
               <>
                 <div className="glass-panel text-center">
@@ -99,12 +133,16 @@ export const FacultyDashboardView = () => {
                   <div className="text-3xl font-extrabold text-emerald-400">{stats ? stats.verifiedCount : '--'}</div>
                 </div>
                 <div className="glass-panel text-center">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pending Verification Queue</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pending Alumni Queue</div>
                   <div className="text-3xl font-extrabold text-amber-400">{queue.length}</div>
                 </div>
                 <div className="glass-panel text-center">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pending Opportunities</div>
+                  <div className="text-3xl font-extrabold text-violet-400">{oppQueue.length}</div>
+                </div>
+                <div className="glass-panel text-center">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Combined Submissions</div>
-                  <div className="text-3xl font-extrabold text-violet-400">
+                  <div className="text-3xl font-extrabold text-cyan-400">
                     {stats ? stats.verifiedCount + queue.length : '--'}
                   </div>
                 </div>
@@ -112,112 +150,210 @@ export const FacultyDashboardView = () => {
             )}
           </div>
 
-          {/* Verification Queue Table */}
-          <div className="glass-panel p-0 overflow-hidden border border-slate-800">
-            <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-400" /> Recent Alumni Registration Queue
-              </h3>
-              <span className="text-xs text-slate-400">{queue.length} applications pending</span>
-            </div>
-
-            {loading ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
-                    <tr>
-                      <th className="py-3 px-4">Alumnus Information</th>
-                      <th className="py-3 px-4">Batch</th>
-                      <th className="py-3 px-4">Placement / Company</th>
-                      <th className="py-3 px-4">Location</th>
-                      <th className="py-3 px-4">Skills</th>
-                      <th className="py-3 px-4 text-right">Verification Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/60">
-                    <LoadingSkeleton variant="table-row" count={3} />
-                  </tbody>
-                </table>
-              </div>
-            ) : queue.length === 0 ? (
-              <div className="p-12 text-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div className="text-sm font-bold text-white">Queue is Clear!</div>
-                <p className="text-xs text-slate-400">All submitted student alumni applications have been reviewed.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
-                    <tr>
-                      <th className="py-3 px-4">Alumnus Information</th>
-                      <th className="py-3 px-4">Batch</th>
-                      <th className="py-3 px-4">Placement / Company</th>
-                      <th className="py-3 px-4">Location</th>
-                      <th className="py-3 px-4">Skills</th>
-                      <th className="py-3 px-4 text-right">Verification Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/60">
-                    {queue.map(item => (
-                      <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={item.photo}
-                              alt={item.name}
-                              className="w-9 h-9 rounded-xl object-cover border border-violet-500/40"
-                              onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
-                            />
-                            <div>
-                              <div className="font-bold text-white">{item.name}</div>
-                              <div className="text-[10px] text-slate-400">{item.registerNumber} • {item.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 font-bold text-violet-300">
-                          Class of '{String(item.batch).slice(-2)}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <div className="font-semibold text-white">{item.company}</div>
-                          <div className="text-[10px] text-slate-400">{item.designation}</div>
-                        </td>
-                        <td className="py-3.5 px-4 text-slate-300">{item.location}</td>
-                        <td className="py-3.5 px-4">
-                          <div className="flex flex-wrap gap-1 max-w-xs">
-                            {item.skills.slice(0, 3).map((s, i) => (
-                              <span key={i} className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
-                                {s}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleApprove(item.id, item.name)}
-                              className="btn btn-success text-xs py-1.5 px-3 font-bold flex items-center gap-1"
-                            >
-                              <Check className="w-3.5 h-3.5" /> Approve
-                            </button>
-                            <button
-                              onClick={() => handleReject(item.id, item.name)}
-                              className="btn btn-danger text-xs py-1.5 px-2.5 font-bold"
-                              title="Reject"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+          {/* Tab Switcher */}
+          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 max-w-md">
+            <button
+              onClick={() => setActiveTab('alumni')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'alumni' ? 'bg-pink-600 text-white' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" /> Alumni Registrations ({queue.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('opportunities')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'opportunities' ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5" /> Opportunity Posts ({oppQueue.length})
+            </button>
           </div>
+
+          {/* Alumni Registration Queue */}
+          {activeTab === 'alumni' && (
+            <div className="glass-panel p-0 overflow-hidden border border-slate-800">
+              <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-400" /> Recent Alumni Registration Queue
+                </h3>
+                <span className="text-xs text-slate-400">{queue.length} applications pending</span>
+              </div>
+
+              {loading ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                      <tr>
+                        <th className="py-3 px-4">Alumnus Information</th>
+                        <th className="py-3 px-4">Batch</th>
+                        <th className="py-3 px-4">Placement / Company</th>
+                        <th className="py-3 px-4">Location</th>
+                        <th className="py-3 px-4">Skills</th>
+                        <th className="py-3 px-4 text-right">Verification Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60">
+                      <LoadingSkeleton variant="table-row" count={3} />
+                    </tbody>
+                  </table>
+                </div>
+              ) : queue.length === 0 ? (
+                <div className="p-12 text-center space-y-2">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <div className="text-sm font-bold text-white">Queue is Clear!</div>
+                  <p className="text-xs text-slate-400">All submitted student alumni applications have been reviewed.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                      <tr>
+                        <th className="py-3 px-4">Alumnus Information</th>
+                        <th className="py-3 px-4">Batch</th>
+                        <th className="py-3 px-4">Placement / Company</th>
+                        <th className="py-3 px-4">Location</th>
+                        <th className="py-3 px-4">Skills</th>
+                        <th className="py-3 px-4 text-right">Verification Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60">
+                      {queue.map(item => (
+                        <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={item.photo}
+                                alt={item.name}
+                                className="w-9 h-9 rounded-xl object-cover border border-violet-500/40"
+                                onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
+                              />
+                              <div>
+                                <div className="font-bold text-white">{item.name}</div>
+                                <div className="text-[10px] text-slate-400">{item.registerNumber} • {item.email}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-violet-300">
+                            Class of '{String(item.batch).slice(-2)}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <div className="font-semibold text-white">{item.company}</div>
+                            <div className="text-[10px] text-slate-400">{item.designation}</div>
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-300">{item.location}</td>
+                          <td className="py-3.5 px-4">
+                            <div className="flex flex-wrap gap-1 max-w-xs">
+                              {item.skills.slice(0, 3).map((s, i) => (
+                                <span key={i} className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleApprove(item.id, item.name)}
+                                className="btn btn-success text-xs py-1.5 px-3 font-bold flex items-center gap-1"
+                              >
+                                <Check className="w-3.5 h-3.5" /> Approve
+                              </button>
+                              <button
+                                onClick={() => handleReject(item.id, item.name)}
+                                className="btn btn-danger text-xs py-1.5 px-2.5 font-bold"
+                                title="Reject"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Opportunity Approval Queue */}
+          {activeTab === 'opportunities' && (
+            <div className="glass-panel p-0 overflow-hidden border border-slate-800">
+              <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-violet-400" /> Pending Opportunity Postings
+                </h3>
+                <span className="text-xs text-slate-400">{oppQueue.length} pending review</span>
+              </div>
+
+              {oppQueue.length === 0 ? (
+                <div className="p-12 text-center space-y-2">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <div className="text-sm font-bold text-white">No Pending Opportunities</div>
+                  <p className="text-xs text-slate-400">All alumni-submitted job postings have been reviewed.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-800/60">
+                  {oppQueue.map(opp => (
+                    <div key={opp.id} className="p-5 hover:bg-slate-800/20 transition-colors">
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-extrabold text-white">{opp.title}</h4>
+                            <span className="badge badge-pending text-[10px] font-bold">
+                              <Clock className="w-3 h-3" /> Pending
+                            </span>
+                          </div>
+                          <p className="text-xs font-semibold text-violet-300">{opp.company} — {opp.location}</p>
+                          <p className="text-[11px] text-slate-400">
+                            Posted by: <strong className="text-white">{opp.postedBy}</strong> • {opp.employmentType}
+                            {opp.salary && ` • ${opp.salary}`}
+                          </p>
+                          <p className="text-xs text-slate-400 leading-relaxed bg-slate-950/40 p-3 rounded-xl border border-white/5">
+                            {opp.description}
+                          </p>
+                          {opp.skills && (
+                            <div className="flex flex-wrap gap-1.5">
+                              {opp.skills.split(',').map((s, i) => (
+                                <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 font-medium">
+                                  {s.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-4 text-[10px] text-slate-500">
+                            {opp.lastDate && <span>Apply by: {opp.lastDate}</span>}
+                            <span>{opp.vacancies} {Number(opp.vacancies) === 1 ? 'vacancy' : 'vacancies'}</span>
+                            <span>Contact: {opp.contactEmail}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => handleApproveOpp(opp.id, opp.title)}
+                            className="btn btn-success text-xs py-2 px-4 font-bold flex items-center gap-1.5"
+                          >
+                            <Check className="w-3.5 h-3.5" /> Approve
+                          </button>
+                          <button
+                            onClick={() => handleRejectOpp(opp.id, opp.title)}
+                            className="btn btn-danger text-xs py-2 px-3 font-bold flex items-center gap-1"
+                          >
+                            <X className="w-3.5 h-3.5" /> Reject
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

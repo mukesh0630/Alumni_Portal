@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 const MOCK_PROFILES = {
-  guest: {
-    role: 'guest',
+  visitor: {
+    role: 'visitor',
     name: 'Visitor Account',
     photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100'
   },
@@ -37,17 +37,26 @@ const MOCK_PROFILES = {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('cs_alumni_user');
-    return saved ? JSON.parse(saved) : MOCK_PROFILES.guest;
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Migrate old 'guest' role to 'visitor'
+      if (parsed.role === 'guest') {
+        parsed.role = 'visitor';
+        localStorage.setItem('cs_alumni_user', JSON.stringify(parsed));
+      }
+      return parsed;
+    }
+    return MOCK_PROFILES.visitor;
   });
 
   const loginAs = (role) => {
-    const profile = MOCK_PROFILES[role] || MOCK_PROFILES.guest;
+    const profile = MOCK_PROFILES[role] || MOCK_PROFILES.visitor;
     setCurrentUser(profile);
     localStorage.setItem('cs_alumni_user', JSON.stringify(profile));
   };
 
   const logout = () => {
-    loginAs('guest');
+    loginAs('visitor');
   };
 
   return (

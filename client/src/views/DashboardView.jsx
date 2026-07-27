@@ -5,8 +5,12 @@ import { AlumniCard } from '../components/AlumniCard';
 import { OpportunityCard } from '../components/OpportunityCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { ErrorBanner } from '../components/ErrorBanner';
+import { useAuth } from '../context/AuthContext';
 
 export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportunity }) => {
+  const { currentUser } = useAuth();
+  const role = currentUser.role;
+
   const [stats, setStats] = useState(null);
   const [featuredAlumni, setFeaturedAlumni] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
@@ -54,6 +58,12 @@ export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportuni
     }
   };
 
+  // Show opportunities section only for students (not visitor, alumni, faculty)
+  const showOpportunities = role === 'student';
+
+  // Show AI Career Guide button for everyone except visitors
+  const showAiButton = role !== 'visitor';
+
   if (error) {
     return (
       <div className="space-y-12 animate-fade-in">
@@ -95,13 +105,15 @@ export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportuni
               <span>Explore Alumni Directory</span>
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button
-              onClick={() => setActiveView('ai-assistant')}
-              className="btn btn-secondary text-base font-bold px-6 py-3 flex items-center gap-2.5 rounded-xl border-violet-500/30 hover:border-violet-500"
-            >
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              <span>Ask AI Career Guide</span>
-            </button>
+            {showAiButton && (
+              <button
+                onClick={() => setActiveView('ai-assistant')}
+                className="btn btn-secondary text-base font-bold px-6 py-3 flex items-center gap-2.5 rounded-xl border-violet-500/30 hover:border-violet-500"
+              >
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <span>Ask AI Career Guide</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -140,55 +152,56 @@ export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportuni
         )}
       </div>
 
-      {/* Recommended Opportunities for Students (Sliding Carousel) */}
-      <div className="relative bg-gradient-to-r from-violet-950/40 via-slate-900/60 to-slate-950/40 rounded-3xl p-6 border border-violet-500/20 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="w-6 h-6 text-violet-400" />
-              <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-                Recommended Opportunities for Students
-              </h2>
+      {/* Recommended Opportunities for Students (Sliding Carousel) — ONLY for students */}
+      {showOpportunities && (
+        <div className="relative bg-gradient-to-r from-violet-950/40 via-slate-900/60 to-slate-950/40 rounded-3xl p-6 border border-violet-500/20 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="flex items-center gap-2">
+                <GraduationCap className="w-6 h-6 text-violet-400" />
+                <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                  Recommended Opportunities for Students
+                </h2>
+              </div>
+              <p className="text-xs md:text-sm text-slate-400 mt-1">
+                Direct referrals, internships, and mentorship openings sponsored by department alumni.
+              </p>
             </div>
-            <p className="text-xs md:text-sm text-slate-400 mt-1">
-              Direct referrals, internships, and mentorship openings sponsored by department alumni.
-            </p>
+
+            {/* Sliding Carousel Controls */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => scrollOpportunities('left')}
+                className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-violet-600 text-white border border-slate-700 hover:border-violet-500 transition-all shadow-md"
+                title="Slide Left"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => scrollOpportunities('right')}
+                className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-violet-600 text-white border border-slate-700 hover:border-violet-500 transition-all shadow-md"
+                title="Slide Right"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
-          {/* Sliding Carousel Controls */}
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => scrollOpportunities('left')}
-              className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-violet-600 text-white border border-slate-700 hover:border-violet-500 transition-all shadow-md"
-              title="Slide Left"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => scrollOpportunities('right')}
-              className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-violet-600 text-white border border-slate-700 hover:border-violet-500 transition-all shadow-md"
-              title="Slide Right"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+          {/* Sliding Horizontal Wrapper */}
+          <div
+            ref={scrollRef}
+            className="netflix-scroll-wrapper scrollbar-hidden"
+          >
+            {loading ? (
+              <LoadingSkeleton variant="card" count={3} />
+            ) : (
+              opportunities.map(opp => (
+                <OpportunityCard key={opp.id} opp={opp} onApply={handleApply} />
+              ))
+            )}
           </div>
         </div>
-
-        {/* Sliding Horizontal Wrapper */}
-        <div
-          ref={scrollRef}
-          style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}
-          className="flex flex-row flex-nowrap gap-5 overflow-x-auto pb-4 pt-1 scroll-smooth scrollbar-hidden"
-        >
-          {loading ? (
-            <LoadingSkeleton variant="card" count={3} />
-          ) : (
-            opportunities.map(opp => (
-              <OpportunityCard key={opp.id} opp={opp} onApply={handleApply} />
-            ))
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Distinguished Pioneers */}
       <div>
@@ -197,12 +210,14 @@ export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportuni
             <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Distinguished Hall of Fame</h2>
             <p className="text-xs md:text-sm text-slate-400 mt-1">Leading software architects, engineering directors, and founders.</p>
           </div>
-          <button
-            onClick={() => setActiveView('hall-of-fame')}
-            className="btn btn-secondary text-xs font-bold px-4 py-2"
-          >
-            View All Hall of Fame
-          </button>
+          {role !== 'alumni' && (
+            <button
+              onClick={() => setActiveView('hall-of-fame')}
+              className="btn btn-secondary text-xs font-bold px-4 py-2"
+            >
+              View All Hall of Fame
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -254,4 +269,3 @@ export const DashboardView = ({ setActiveView, onSelectProfile, onApplyOpportuni
     </div>
   );
 };
-

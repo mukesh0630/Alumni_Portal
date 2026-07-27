@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X, CheckCircle2, Award, Briefcase, MapPin, Sparkles, Mail, ExternalLink, Compass, Zap } from 'lucide-react';
 
-export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }) => {
+export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery, userRole }) => {
   const modalRef = useRef(null);
   const previousFocusRef = useRef(null);
 
@@ -41,6 +41,9 @@ export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }
     }
   };
 
+  const isVisitor = userRole === 'visitor';
+  const isFaculty = userRole === 'faculty';
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
@@ -75,6 +78,7 @@ export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }
               </div>
               <p className="text-xs text-slate-400 mt-0.5">Batch of {alumnus.batch} • {alumnus.company}</p>
               <p className="text-sm font-semibold text-violet-400 mt-1">{alumnus.designation}</p>
+              {/* Location — visible to all */}
               <p className="text-xs text-slate-400 flex items-center gap-1 mt-1">
                 <MapPin className="w-3.5 h-3.5 text-pink-400" /> {alumnus.location}
               </p>
@@ -100,28 +104,30 @@ export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }
             </p>
           </div>
 
-          {/* Mentorship Status & Action */}
-          <div className="p-4 rounded-xl bg-violet-950/30 border border-violet-800/40 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              <div>
-                <div className="font-bold text-white">
-                  {alumnus.mentorship ? 'Mentorship Program Active' : 'Mentorship Currently Unavailable'}
-                </div>
-                <div className="text-[11px] text-slate-400">
-                  {alumnus.mentorship ? 'Available for 1-on-1 career guidance & resume reviews' : 'Not accepting new mentees at this time'}
+          {/* Mentorship Status & Action — hidden for visitors and faculty */}
+          {!isVisitor && !isFaculty && (
+            <div className="p-4 rounded-xl bg-violet-950/30 border border-violet-800/40 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <div>
+                  <div className="font-bold text-white">
+                    {alumnus.mentorship ? 'Mentorship Program Active' : 'Mentorship Currently Unavailable'}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    {alumnus.mentorship ? 'Available for 1-on-1 career guidance & resume reviews' : 'Not accepting new mentees at this time'}
+                  </div>
                 </div>
               </div>
+              {alumnus.mentorship && (
+                <button
+                  onClick={() => onRequestMentorship(alumnus)}
+                  className="btn btn-primary text-xs shrink-0"
+                >
+                  Request Mentorship
+                </button>
+              )}
             </div>
-            {alumnus.mentorship && (
-              <button
-                onClick={() => onRequestMentorship(alumnus)}
-                className="btn btn-primary text-xs shrink-0"
-              >
-                Request Mentorship
-              </button>
-            )}
-          </div>
+          )}
 
           {/* Skills */}
           <div>
@@ -164,21 +170,25 @@ export const AlumniModal = ({ alumnus, onClose, onRequestMentorship, onAiQuery }
           </div>
         </div>
 
-        {/* Footer Actions */}
+        {/* Footer Actions — AI features hidden for visitors */}
         <div className="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => onAiQuery('summary', alumnus.name)}
-              className="btn btn-secondary text-xs flex items-center gap-1.5"
-            >
-              <Zap className="w-3.5 h-3.5 text-amber-400" /> AI Executive Summary
-            </button>
-            <button
-              onClick={() => onAiQuery('roadmap', alumnus.name)}
-              className="btn btn-secondary text-xs flex items-center gap-1.5"
-            >
-              <Compass className="w-3.5 h-3.5 text-violet-400" /> AI Roadmap
-            </button>
+            {!isVisitor && (
+              <>
+                <button
+                  onClick={() => onAiQuery('summary', alumnus.name)}
+                  className="btn btn-secondary text-xs flex items-center gap-1.5"
+                >
+                  <Zap className="w-3.5 h-3.5 text-amber-400" /> AI Executive Summary
+                </button>
+                <button
+                  onClick={() => onAiQuery('roadmap', alumnus.name)}
+                  className="btn btn-secondary text-xs flex items-center gap-1.5"
+                >
+                  <Compass className="w-3.5 h-3.5 text-violet-400" /> AI Roadmap
+                </button>
+              </>
+            )}
           </div>
           <button onClick={onClose} className="btn btn-secondary text-xs">
             Close

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
@@ -19,8 +19,11 @@ import { AlumniDashboardView } from './views/AlumniDashboardView';
 import { StudentGraduationView } from './views/StudentGraduationView';
 import { SettingsView } from './views/SettingsView';
 import { AuthView } from './views/AuthView';
+import { PostOpportunityView } from './views/PostOpportunityView';
+import { MyOpportunitiesView } from './views/MyOpportunitiesView';
 
 function AppContent() {
+  const { currentUser } = useAuth();
   const [activeView, setActiveView] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -38,6 +41,11 @@ function AppContent() {
   // Close sidebar on view change (mobile)
   useEffect(() => {
     setSidebarOpen(false);
+  }, [activeView]);
+
+  // Scroll to top on view change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [activeView]);
 
   const handleSelectProfile = async (id) => {
@@ -84,7 +92,7 @@ function AppContent() {
 
         <main className="p-4 md:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto">
           {activeView === 'dashboard' && (
-            <DashboardView setActiveView={setActiveView} onSelectProfile={handleSelectProfile} />
+            <DashboardView setActiveView={setActiveView} onSelectProfile={handleSelectProfile} onApplyOpportunity={handleApplyOpportunity} />
           )}
 
           {activeView === 'directory' && (
@@ -119,6 +127,10 @@ function AppContent() {
           {activeView === 'settings' && <SettingsView setActiveView={setActiveView} />}
 
           {activeView === 'auth' && <AuthView setActiveView={setActiveView} />}
+
+          {activeView === 'post-opportunity' && <PostOpportunityView />}
+
+          {activeView === 'my-opportunities' && <MyOpportunitiesView />}
         </main>
       </div>
 
@@ -132,6 +144,7 @@ function AppContent() {
             setMentorshipAlumnus(al);
           }}
           onAiQuery={handleAiQueryFromModal}
+          userRole={currentUser.role}
         />
       )}
 

@@ -14,6 +14,52 @@ let fallbackQueue = [...MOCK_VERIFICATION_QUEUE];
 let fallbackNotifications = [...MOCK_NOTIFICATIONS];
 let fallbackOpportunities = [...MOCK_OPPORTUNITIES];
 
+// In-memory store for alumni-posted opportunities
+let postedOpportunities = [
+  {
+    id: 'po_1',
+    title: 'Junior React Developer',
+    company: 'Zoho',
+    location: 'Chennai, India',
+    employmentType: 'Full-time',
+    salary: '₹6-8 LPA',
+    experience: '0-1 years',
+    skills: 'React, JavaScript, CSS, REST APIs',
+    description: 'Join the Zoho Desk frontend team as a Junior React Developer. Work on customer-facing SaaS UI components, collaborate with senior engineers, and grow rapidly in a product company environment.',
+    applicationLink: 'https://careers.zoho.com',
+    contactEmail: 'vikram.malhotra@zoho.com',
+    lastDate: '2026-08-30',
+    vacancies: '3',
+    postedBy: 'Vikram Malhotra',
+    postedById: 'a10',
+    status: 'approved',
+    badge: 'Alumni Referral',
+    tags: ['React', 'SaaS', 'Product'],
+    createdAt: '2026-07-15'
+  },
+  {
+    id: 'po_2',
+    title: 'Cloud Infrastructure Intern',
+    company: 'Google',
+    location: 'Bengaluru, India',
+    employmentType: 'Internship',
+    salary: '₹80K/month stipend',
+    experience: 'Freshers',
+    skills: 'Python, Linux, Docker, Kubernetes',
+    description: 'Work with the Google Cloud Platform team on infrastructure automation and container orchestration. Ideal for B.Sc CS students with strong systems fundamentals.',
+    applicationLink: 'https://careers.google.com',
+    contactEmail: 'anand.desai@google.com',
+    lastDate: '2026-09-15',
+    vacancies: '2',
+    postedBy: 'Anand Desai',
+    postedById: 'a1',
+    status: 'pending',
+    badge: 'Alumni Referral',
+    tags: ['Cloud', 'DevOps', 'Internship'],
+    createdAt: '2026-07-20'
+  }
+];
+
 async function request(endpoint, options = {}) {
   try {
     const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -227,9 +273,82 @@ function handleClientFallback(endpoint, options = {}) {
     return Promise.resolve({ success: true, message: 'All notifications marked as read', data: fallbackNotifications });
   }
 
-  // GET /opportunities
+  // GET /opportunities — returns approved posted opportunities + MOCK_OPPORTUNITIES
   if (pathname === '/opportunities' && method === 'GET') {
-    return Promise.resolve({ success: true, count: fallbackOpportunities.length, data: fallbackOpportunities });
+    const approved = postedOpportunities.filter(o => o.status === 'approved');
+    const combined = [...fallbackOpportunities, ...approved.map(o => ({
+      id: o.id,
+      title: o.title,
+      company: o.company,
+      location: o.location,
+      desc: o.description,
+      badge: o.badge || 'Alumni Referral',
+      tags: o.tags || o.skills.split(',').map(s => s.trim()).slice(0, 3)
+    }))];
+    return Promise.resolve({ success: true, count: combined.length, data: combined });
+  }
+
+  // POST /opportunities — submit new opportunity
+  if (pathname === '/opportunities' && method === 'POST') {
+    const payload = JSON.parse(options.body || '{}');
+    const newOpp = {
+      id: 'po_' + Date.now(),
+      ...payload,
+      badge: 'Alumni Referral',
+      tags: payload.skills ? payload.skills.split(',').map(s => s.trim()).slice(0, 3) : [],
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    postedOpportunities.push(newOpp);
+    return Promise.resolve({ success: true, message: 'Opportunity submitted for faculty approval.', data: newOpp });
+  }
+
+  // POST /opportunities/draft — save draft
+  if (pathname === '/opportunities/draft' && method === 'POST') {
+    const payload = JSON.parse(options.body || '{}');
+    const draft = {
+      id: 'po_' + Date.now(),
+      ...payload,
+      badge: 'Alumni Referral',
+      tags: payload.skills ? payload.skills.split(',').map(s => s.trim()).slice(0, 3) : [],
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    postedOpportunities.push(draft);
+    return Promise.resolve({ success: true, message: 'Draft saved.', data: draft });
+  }
+
+  // GET /opportunities/my/:alumniId — get opportunities by alumni
+  if (pathname.startsWith('/opportunities/my/') && method === 'GET') {
+    const alumniId = pathname.replace('/opportunities/my/', '');
+    const myOpps = postedOpportunities.filter(o => o.postedById === alumniId);
+    return Promise.resolve({ success: true, count: myOpps.length, data: myOpps });
+  }
+
+  // GET /opportunities/pending — get pending opportunities for faculty approval
+  if (pathname === '/opportunities/pending' && method === 'GET') {
+    const pending = postedOpportunities.filter(o => o.status === 'pending');
+    return Promise.resolve({ success: true, count: pending.length, data: pending });
+  }
+
+  // PATCH /opportunities/:id/approve
+  if (pathname.startsWith('/opportunities/') && pathname.endsWith('/approve') && method === 'PATCH') {
+    const id = pathname.replace('/opportunities/', '').replace('/approve', '');
+    const opp = postedOpportunities.find(o => o.id === id);
+    if (opp) {
+      opp.status = 'approved';
+      return Promise.resolve({ success: true, message: 'Opportunity approved.', data: opp });
+    }
+    return Promise.resolve({ success: false, message: 'Opportunity not found' });
+  }
+
+  // PATCH /opportunities/:id/reject
+  if (pathname.startsWith('/opportunities/') && pathname.endsWith('/reject') && method === 'PATCH') {
+    const id = pathname.replace('/opportunities/', '').replace('/reject', '');
+    const opp = postedOpportunities.find(o => o.id === id);
+    if (opp) {
+      opp.status = 'rejected';
+      return Promise.resolve({ success: true, message: 'Opportunity rejected.', data: opp });
+    }
+    return Promise.resolve({ success: false, message: 'Opportunity not found' });
   }
 
   // POST /contact
@@ -268,8 +387,16 @@ export const api = {
   getNotifications: () => request('/notifications'),
   markNotificationsRead: () => request('/notifications/mark-read', { method: 'POST' }),
 
-  // Student Opportunities API
+  // Student Opportunities API (approved ones)
   getOpportunities: () => request('/opportunities'),
+
+  // Alumni-posted Opportunities APIs
+  postOpportunity: (payload) => request('/opportunities', { method: 'POST', body: JSON.stringify(payload) }),
+  saveDraftOpportunity: (payload) => request('/opportunities/draft', { method: 'POST', body: JSON.stringify(payload) }),
+  getMyOpportunities: (alumniId) => request(`/opportunities/my/${alumniId}`),
+  getPendingOpportunities: () => request('/opportunities/pending'),
+  approveOpportunity: (id) => request(`/opportunities/${id}/approve`, { method: 'PATCH' }),
+  rejectOpportunity: (id) => request(`/opportunities/${id}/reject`, { method: 'PATCH' }),
 
   // Contact API
   sendContactForm: (payload) => request('/contact', { method: 'POST', body: JSON.stringify(payload) }),

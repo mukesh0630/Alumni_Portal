@@ -11,23 +11,37 @@ import {
   ShieldCheck,
   UserCog,
   GraduationCap,
-  X
+  X,
+  PlusCircle,
+  Briefcase
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const Sidebar = ({ activeView, setActiveView, isOpen, onClose }) => {
   const { currentUser } = useAuth();
+  const role = currentUser.role;
 
+  // Build nav items dynamically based on role
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'directory', label: 'Directory', icon: Users },
-    { id: 'hall-of-fame', label: 'Hall of Fame', icon: Award },
-    { id: 'stats', label: 'Statistics', icon: BarChart3 },
-    { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, badge: 'AI' },
-    { id: 'about', label: 'About Dept', icon: Info },
-    { id: 'contact', label: 'Contact', icon: Phone },
-    { id: 'settings', label: 'Settings', icon: Settings },
   ];
+
+  // Hall of Fame: visible to visitor, student, faculty — NOT alumni
+  if (role !== 'alumni') {
+    navItems.push({ id: 'hall-of-fame', label: 'Hall of Fame', icon: Award });
+  }
+
+  navItems.push({ id: 'stats', label: 'Statistics', icon: BarChart3 });
+
+  // AI Assistant: visible to student, alumni, faculty — NOT visitor
+  if (role !== 'visitor') {
+    navItems.push({ id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, badge: 'AI' });
+  }
+
+  navItems.push({ id: 'about', label: 'About Dept', icon: Info });
+  navItems.push({ id: 'contact', label: 'Contact', icon: Phone });
+  navItems.push({ id: 'settings', label: 'Settings', icon: Settings });
 
   const handleNavigate = (viewId) => {
     setActiveView(viewId);
@@ -106,7 +120,7 @@ export const Sidebar = ({ activeView, setActiveView, isOpen, onClose }) => {
             })}
 
             {/* Role Based Navigation */}
-            {currentUser.role === 'faculty' && (
+            {role === 'faculty' && (
               <button
                 onClick={() => handleNavigate('faculty-dashboard')}
                 aria-current={activeView === 'faculty-dashboard' ? 'page' : undefined}
@@ -121,22 +135,50 @@ export const Sidebar = ({ activeView, setActiveView, isOpen, onClose }) => {
               </button>
             )}
 
-            {currentUser.role === 'alumni' && (
-              <button
-                onClick={() => handleNavigate('alumni-dashboard')}
-                aria-current={activeView === 'alumni-dashboard' ? 'page' : undefined}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs mt-4 transition-all ${
-                  activeView === 'alumni-dashboard'
-                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
-                    : 'bg-emerald-950/30 border border-emerald-500/20 text-emerald-300 hover:bg-emerald-900/40'
-                }`}
-              >
-                <UserCog className="w-4 h-4 text-emerald-400" />
-                <span>My Profile & Timeline</span>
-              </button>
+            {role === 'alumni' && (
+              <>
+                <button
+                  onClick={() => handleNavigate('alumni-dashboard')}
+                  aria-current={activeView === 'alumni-dashboard' ? 'page' : undefined}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs mt-4 transition-all ${
+                    activeView === 'alumni-dashboard'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
+                      : 'bg-emerald-950/30 border border-emerald-500/20 text-emerald-300 hover:bg-emerald-900/40'
+                  }`}
+                >
+                  <UserCog className="w-4 h-4 text-emerald-400" />
+                  <span>My Profile & Timeline</span>
+                </button>
+
+                <button
+                  onClick={() => handleNavigate('post-opportunity')}
+                  aria-current={activeView === 'post-opportunity' ? 'page' : undefined}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs mt-1.5 transition-all ${
+                    activeView === 'post-opportunity'
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg'
+                      : 'bg-violet-950/30 border border-violet-500/20 text-violet-300 hover:bg-violet-900/40'
+                  }`}
+                >
+                  <PlusCircle className="w-4 h-4 text-violet-400" />
+                  <span>Post Opportunity</span>
+                </button>
+
+                <button
+                  onClick={() => handleNavigate('my-opportunities')}
+                  aria-current={activeView === 'my-opportunities' ? 'page' : undefined}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs mt-1.5 transition-all ${
+                    activeView === 'my-opportunities'
+                      ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
+                      : 'bg-cyan-950/30 border border-cyan-500/20 text-cyan-300 hover:bg-cyan-900/40'
+                  }`}
+                >
+                  <Briefcase className="w-4 h-4 text-cyan-400" />
+                  <span>My Opportunities</span>
+                </button>
+              </>
             )}
 
-            {currentUser.role === 'student' && (
+            {role === 'student' && (
               <button
                 onClick={() => handleNavigate('student-graduation')}
                 aria-current={activeView === 'student-graduation' ? 'page' : undefined}

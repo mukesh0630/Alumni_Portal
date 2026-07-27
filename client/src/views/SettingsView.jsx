@@ -42,12 +42,12 @@ export const SettingsView = ({ setActiveView }) => {
 
           <div className="grid grid-cols-2 gap-3 pt-1">
             <button
-              onClick={() => loginAs('guest')}
+              onClick={() => loginAs('visitor')}
               className={`btn text-xs font-bold flex items-center gap-1.5 justify-center py-2.5 ${
-                currentUser.role === 'guest' ? 'btn-primary' : 'btn-secondary'
+                currentUser.role === 'visitor' ? 'btn-primary' : 'btn-secondary'
               }`}
             >
-              <User className="w-3.5 h-3.5 text-slate-400" /> Guest Mode
+              <User className="w-3.5 h-3.5 text-slate-400" /> Visitor Mode
             </button>
 
             <button

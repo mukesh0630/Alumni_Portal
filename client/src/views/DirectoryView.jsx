@@ -6,11 +6,15 @@ import { OpportunityCard } from '../components/OpportunityCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { useDebounce } from '../hooks/useDebounce';
+import { useAuth } from '../context/AuthContext';
 
 export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, onApplyOpportunity }) => {
+  const { currentUser } = useAuth();
+  const role = currentUser.role;
   const [alumni, setAlumni] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
-  const [showOpportunities, setShowOpportunities] = useState(true);
+  // Only students can see opportunities
+  const [showOpportunities, setShowOpportunities] = useState(role === 'student');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -86,13 +90,16 @@ export const DirectoryView = ({ onSelectProfile, searchQuery, setSearchQuery, on
           <p className="text-xs text-slate-400 mt-1">Search and filter B.Sc Computer Science graduates from 1994 to present.</p>
         </div>
 
-        <button
-          onClick={() => setShowOpportunities(!showOpportunities)}
-          className="btn btn-primary text-xs font-bold self-start md:self-auto flex items-center gap-2"
-        >
-          <Sparkles className="w-4 h-4 text-amber-300" />
-          <span>{showOpportunities ? 'Hide Opportunities' : 'Show Student Opportunities'}</span>
-        </button>
+        {/* Toggle opportunities — only visible for students */}
+        {role === 'student' && (
+          <button
+            onClick={() => setShowOpportunities(!showOpportunities)}
+            className="btn btn-primary text-xs font-bold self-start md:self-auto flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>{showOpportunities ? 'Hide Opportunities' : 'Show Student Opportunities'}</span>
+          </button>
+        )}
       </div>
 
       {/* Opportunities Horizontal Row */}

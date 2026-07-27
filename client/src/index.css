@@ -240,3 +240,154 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 6px;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Netflix-style horizontal scroll wrapper */
+.netflix-scroll-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 1.25rem;
+  padding-bottom: 1rem;
+  padding-top: 0.25rem;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.netflix-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* Slide-in animation for mobile sidebar */
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.25s ease forwards;
+}
+
+/* Cursor fixes */
+.btn,
+button,
+[role="button"],
+[role="menuitem"],
+a,
+select,
+label[for],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea {
+  cursor: text;
+}
+
+.btn:disabled,
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Status badge utilities */
+.badge-pending {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.badge-approved {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-rejected {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.badge-draft {
+  background: rgba(100, 116, 139, 0.18);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.35);
+}
+
+/* Light Mode Overrides */
+body.light-mode {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+}
+
+body.light-mode .glass-panel {
+  background: var(--bg-card);
+  border-color: rgba(139, 92, 246, 0.12);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.light-mode .glass-panel:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 8px 30px -5px rgba(139, 92, 246, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.light-mode .hero-glow-card {
+  background: linear-gradient(135deg, rgba(237, 233, 254, 0.95) 0%, rgba(243, 244, 246, 0.98) 100%);
+  border-color: rgba(139, 92, 246, 0.2);
+  box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.15);
+}
+
+body.light-mode .btn-secondary {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-main);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+body.light-mode input,
+body.light-mode textarea,
+body.light-mode select {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+body.light-mode input::placeholder,
+body.light-mode textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.light-mode ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.25);
+}
+

@@ -68,20 +68,20 @@ export const Navbar = ({ activeView, setActiveView, setSearchQuery, searchQuery,
           <Menu className="w-4 h-4" />
         </button>
 
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search alumni, companies, roles..."
-            value={searchQuery}
-            onFocus={() => {
-              if (activeView !== 'directory') setActiveView('directory');
-            }}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label="Search alumni directory"
-            className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
-          />
-        </div>
+        {/* Search bar — only visible on Directory view */}
+        {activeView === 'directory' && (
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search alumni, companies, roles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search alumni directory"
+              className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+            />
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-2 md:gap-3">
@@ -126,7 +126,12 @@ export const Navbar = ({ activeView, setActiveView, setSearchQuery, searchQuery,
                     <div
                       key={n.id}
                       role="menuitem"
-                      className={`p-2.5 rounded-lg text-xs transition-colors ${
+                      onClick={() => {
+                        if (n.unread) {
+                          setNotifications(prev => prev.map(notif => notif.id === n.id ? { ...notif, unread: false } : notif));
+                        }
+                      }}
+                      className={`p-2.5 rounded-lg text-xs transition-colors cursor-pointer ${
                         n.unread ? 'bg-violet-950/40 border border-violet-800/40' : 'bg-slate-950/40'
                       }`}
                     >
@@ -212,12 +217,12 @@ export const Navbar = ({ activeView, setActiveView, setSearchQuery, searchQuery,
                   {currentUser.role === 'faculty' && <Check className="w-3 h-3 text-pink-400" />}
                 </button>
                 <button
-                  onClick={() => { loginAs('guest'); setShowProfileMenu(false); }}
+                  onClick={() => { loginAs('visitor'); setShowProfileMenu(false); }}
                   role="menuitem"
                   className="w-full text-left px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800 rounded-lg flex items-center justify-between"
                 >
-                  <span>Guest Mode</span>
-                  {currentUser.role === 'guest' && <Check className="w-3 h-3 text-slate-400" />}
+                  <span>Visitor Mode</span>
+                  {currentUser.role === 'visitor' && <Check className="w-3 h-3 text-slate-400" />}
                 </button>
               </div>
 
